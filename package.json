@@ -1,0 +1,19 @@
+{
+  "name": "api-restful-favoritos",
+  "version": "1.0.0",
+  "description": "Api curso NODEJS y Angular",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2"
+  },
+  "devDependencies":{
+    "nodemon":"^1.12.1"
+  }
+}
