@@ -1,24 +1,84 @@
 'use strict'
 
 var Image = require('../models/image');
+var Producto = require('../models/producto');
 
+function pruebas(req,res){
+                res.status(200).send({message:'Pruebas de controlador de imagenes'});
+}
 
 function getImage(req,res){
     var imageId=req.params.id;
-    Image.findById(imageId, function(err,image){
+    Image.findById(imageId, (err,image)=>{
         if(err){
-            res.status(500).send({status:"ko", code:500, message:'Error al devolver la imagen'});
+            res.status(500).send({message:'Error al devolver la imagen'});
         }else{
             if(!image){
-                res.status(404).send({status:"ko", code:404, message:'No existe la imagen'});
+                res.status(404).send({message:'No existe la imagen'});
             }else{
-                res.status(200).send({status:"ok", code:200, image:image});
+                Producto.populate(image,{path:'producto'},(err, image)=>{
+                    if(err){
+                        res.status(500).send({message:'Error en la petición'});
+                    }else{
+                        res.status(200).send({image:image});
+                    }    
+                });  
             }
         }
     });
 }
+//se pueden solicitar las imagenes de un producto o si se deja a null se devuelven todas
 
+//se pueden solicitar las imagenes de un producto o si se deja a null se devuelven todas
 function getImages(req,res){
+    var productoId = req.params.producto;
+   
+    if(!productoId){
+        Image.find({}).sort('-titulo').exec((err,images)=> {
+            if(err){
+                res.status(500).send({message:'Error en la petición'});
+            }else{
+                if(!images){
+                    res.status(404).send({message:'No hay imágenes en este producto'});
+                }else{
+                    //inicio populate
+                    Producto.populate(images,{path:'producto'},(err, images)=>{
+                        if(err){
+                            res.status(500).send({message:'Error en la petición'});
+                        }else{
+                            //sin populate poner solo esta linea
+                            res.status(200).send({images:images});
+                        }    
+                    });     
+                    //fin populate
+                }
+            }
+        });
+    }else{
+  Image.find({producto:productoId}).sort('-titulo').exec((err,images)=> {
+            if(err){
+                res.status(500).send({message:'Error en la petición'});
+            }else{
+                if(!images){
+                    res.status(404).send({message:'No hay imágenes en este producto'});
+                }else{
+                    //inicio populate
+                    Producto.populate(images,{path:'producto'},(err, images)=>{
+                        if(err){
+                            res.status(500).send({message:'Error en la petición'});
+                        }else{
+                            //sin populate poner solo esta linea
+                            res.status(200).send({images:images});
+                        }    
+                    });     
+                    //fin populate
+                }
+            }
+        });
+    }
+}
+
+function getImages2(req,res){
     
     Image.find({}).sort('+_id').exec((err,images)=> {
         if(err){
@@ -38,15 +98,20 @@ function saveImage(req,res){
     var params=req.body;
     
     image.titulo=params.titulo;
-    image.picture=params.picture;
+    image.picture=null; //params.picture;
     image.producto=params.producto;
 
     //Salvamos el producto
     image.save((err,imageStored)=>{
         if(err){
-            res.status(500).send({status:"ko", code:500, message:'Error al guardar la imagen'});
+            res.status(500).send({message:'Error en la petición'});
         }else{
-            res.status(200).send({status:"ok", code:200, image:imageStored});
+            if(!imageStored){
+                res.status(404).send({message:'No se ha guardado la imagen!!'});
+            }else{
+                res.status(200).send({image:imageStored});
+            }
+            
         }
     });
 }
@@ -86,6 +151,7 @@ function deleteImage(req,res){
 }
 
 module.exports={
+    pruebas,
     getImage,
     getImages,
     saveImage,
