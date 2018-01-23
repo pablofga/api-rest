@@ -17,5 +17,4 @@ api.post('/upload-image/:id', multipartMiddleware, ImageController.uploadImage);
 api.get('/get-image2/:imageFile', multipartMiddleware, ImageController.getImageFile2);
 api.get('/get-image/:id', multipartMiddleware, ImageController.getImageFile);
 
-
 module.exports = api;

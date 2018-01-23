@@ -14,5 +14,4 @@ api.put('/producto/:id', ProductoController.updateProducto);
 api.delete('/producto/:id', ProductoController.deleteProducto);
 api.post('/upload-file', multipartMiddleware, ProductoController.uploadFile);
 
-
-module.exports = api;
+module.exports = api
