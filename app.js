@@ -5,8 +5,9 @@ var express = require('express');
 var bodyParser = require('body-parser');
 
 var app = express();
-//var api = require('./routes/favorito');
-var api = require('./routes/producto');
+var favorito_routes = require('./routes/favorito');
+var producto_routes = require('./routes/producto');
+var image_routes = require('./routes/image');
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
@@ -20,6 +21,8 @@ app.use((req, res, next)=>{
     next();
 });
 
-app.use('/api',api);
+app.use('/api',favorito_routes);
+app.use('/api',producto_routes);
+app.use('/api',image_routes);
 
 module.exports=app;
